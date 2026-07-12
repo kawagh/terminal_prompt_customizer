@@ -35,6 +35,9 @@ export function SnippetOutput({ state }: SnippetOutputProps) {
           {copied ? "コピーしました" : "コピー"}
         </button>
       </div>
+      <p className="rounded-md border border-border bg-muted/50 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+        ⚠️ .bashrc / .zshrc に適用する前に内容を確認してください。
+      </p>
       <pre className="overflow-x-auto rounded-lg border border-border bg-[#0c0d10] p-3 font-mono text-xs leading-relaxed text-[#e6e6e6]">
         <code>{snippet}</code>
       </pre>
