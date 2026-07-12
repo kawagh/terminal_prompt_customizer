@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef } from "react"
 import type { Shell } from "@/lib/ps1"
 

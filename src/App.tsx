@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { SquareTerminal } from "lucide-react"
 import type { Shell } from "@/lib/ps1"
@@ -15,7 +13,7 @@ import { ShareBar } from "@/components/share-bar"
 const DEFAULT_BASH = "\\[\\e[1;32m\\]\\u@\\h\\[\\e[0m\\]:\\[\\e[1;34m\\]\\w\\[\\e[0m\\]\\$ "
 const DEFAULT_ZSH = "%F{green}%n@%m%f:%F{blue}%~%f%# "
 
-export default function Page() {
+export default function App() {
   const [shell, setShell] = useState<Shell>("bash")
   const [value, setValue] = useState<string>(DEFAULT_BASH)
   const [showOutput, setShowOutput] = useState<boolean>(true)

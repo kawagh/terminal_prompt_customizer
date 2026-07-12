@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo } from "react"
 import type { CSSProperties } from "react"
 import { PRESETS, type Preset } from "@/lib/presets"

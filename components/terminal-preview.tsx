@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo } from "react"
 import type { CSSProperties } from "react"
 import { parsePrompt, type Shell, type Token, DEFAULT_CONTEXT } from "@/lib/ps1"
