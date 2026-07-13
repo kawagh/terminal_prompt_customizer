@@ -68,6 +68,16 @@ resource "aws_cloudfront_distribution" "site" {
   }
 }
 
+output "bucket_name" {
+  value       = aws_s3_bucket.site.bucket
+  description = "デプロイ先のS3バケット名"
+}
+
+output "distribution_id" {
+  value       = aws_cloudfront_distribution.site.id
+  description = "デプロイ時のキャッシュ削除に使うDistribution ID"
+}
+
 resource "aws_s3_bucket_policy" "site" {
   bucket = aws_s3_bucket.site.id
   policy = jsonencode({
