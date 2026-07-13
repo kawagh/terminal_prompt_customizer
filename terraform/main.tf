@@ -45,6 +45,10 @@ import {
   id = "E2FQ0IX92W3P8O"
 }
 
+locals {
+  s3_origin_id = "terminal-prompt-customizer.s3.ap-northeast-1.amazonaws.com-mrhei2h2naq"
+}
+
 resource "aws_cloudfront_distribution" "site" {
   enabled             = true
   comment             = "terminal-prompt-customizerのDistribution"
@@ -59,7 +63,7 @@ resource "aws_cloudfront_distribution" "site" {
   origin {
     domain_name                 = aws_s3_bucket.site.bucket_regional_domain_name
     origin_access_control_id    = aws_cloudfront_origin_access_control.site.id
-    origin_id                   = "terminal-prompt-customizer.s3.ap-northeast-1.amazonaws.com-mrhei2h2naq"
+    origin_id                   = local.s3_origin_id
     origin_path                 = "/dist"
     response_completion_timeout = 0
   }
@@ -69,7 +73,7 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
   default_cache_behavior {
-    target_origin_id = "terminal-prompt-customizer.s3.ap-northeast-1.amazonaws.com-mrhei2h2naq"
+    target_origin_id = local.s3_origin_id
     allowed_methods  = ["GET", "HEAD"]
     # https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized
     cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6"
