@@ -2,8 +2,14 @@
 
 ## development
 
-```
+```sh
 pnpm install
 pnpm dev
+```
+
+## deploy
+
+```sh
+pnpm run deploy
 ```
 
