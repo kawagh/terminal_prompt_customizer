@@ -31,3 +31,16 @@ import {
   to = aws_s3_bucket_public_access_block.site
   id = "terminal-prompt-customizer"
 }
+
+resource "aws_cloudfront_origin_access_control" "site" {
+  name                              = "oac-terminal-prompt-customizer.s3.ap-northeast-1.ama-mrhektuat4q"
+  description                       = "Created by CloudFront"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+import {
+  to = aws_cloudfront_origin_access_control.site
+  id = "E2FQ0IX92W3P8O"
+}
