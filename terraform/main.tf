@@ -14,6 +14,68 @@ terraform {
 }
 provider "aws" { region = "ap-northeast-1" }
 
+# CloudFront用のACM証明書はus-east-1で発行する
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
+# ホストゾーンは他サイトと共用するので参照のみ
+data "aws_route53_zone" "kawagh_net" {
+  name = "kawagh.net"
+}
+
+locals {
+  domain_name = "terminal-prompt-customizer.kawagh.net"
+}
+
+resource "aws_acm_certificate" "site" {
+  provider          = aws.us_east_1
+  domain_name       = local.domain_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# ACMのDNS検証用レコード
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.site.domain_validation_options : dvo.domain_name => dvo
+  }
+
+  zone_id = data.aws_route53_zone.kawagh_net.zone_id
+  name    = each.value.resource_record_name
+  type    = each.value.resource_record_type
+  records = [each.value.resource_record_value]
+  ttl     = 300
+}
+
+resource "aws_route53_record" "site" {
+  zone_id = data.aws_route53_zone.kawagh_net.zone_id
+  name    = local.domain_name
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "site_ipv6" {
+  zone_id = data.aws_route53_zone.kawagh_net.zone_id
+  name    = local.domain_name
+  type    = "AAAA"
+
+  alias {
+    name                   = aws_cloudfront_distribution.site.domain_name
+    zone_id                = aws_cloudfront_distribution.site.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_s3_bucket" "site" {
   bucket = "terminal-prompt-customizer"
 }
@@ -48,8 +110,11 @@ resource "aws_cloudfront_distribution" "site" {
   tags = {
     "Name" = "terminal-prompt-customizer Distribution"
   }
+  aliases = [local.domain_name]
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.site.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.3_2025"
   }
   origin {
     domain_name                 = aws_s3_bucket.site.bucket_regional_domain_name
