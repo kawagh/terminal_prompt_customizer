@@ -5,6 +5,12 @@ terraform {
       version = "~> 6.0"
     }
   }
+  backend "s3" {
+    bucket       = "kawagh-tfstate"
+    key          = "terminal-prompt-customizer/terraform.tfstate"
+    region       = "ap-northeast-1"
+    use_lockfile = true
+  }
 }
 provider "aws" { region = "ap-northeast-1" }
 
