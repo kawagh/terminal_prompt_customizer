@@ -25,9 +25,13 @@ data "aws_route53_zone" "kawagh_net" {
   name = "kawagh.net"
 }
 
+locals {
+  domain_name = "terminal-prompt-customizer.kawagh.net"
+}
+
 resource "aws_acm_certificate" "site" {
   provider          = aws.us_east_1
-  domain_name       = "terminal-prompt-customizer.kawagh.net"
+  domain_name       = local.domain_name
   validation_method = "DNS"
 
   lifecycle {
@@ -50,7 +54,7 @@ resource "aws_route53_record" "cert_validation" {
 
 resource "aws_route53_record" "site" {
   zone_id = data.aws_route53_zone.kawagh_net.zone_id
-  name    = "terminal-prompt-customizer.kawagh.net"
+  name    = local.domain_name
   type    = "A"
 
   alias {
@@ -62,7 +66,7 @@ resource "aws_route53_record" "site" {
 
 resource "aws_route53_record" "site_ipv6" {
   zone_id = data.aws_route53_zone.kawagh_net.zone_id
-  name    = "terminal-prompt-customizer.kawagh.net"
+  name    = local.domain_name
   type    = "AAAA"
 
   alias {
@@ -106,7 +110,7 @@ resource "aws_cloudfront_distribution" "site" {
   tags = {
     "Name" = "terminal-prompt-customizer Distribution"
   }
-  aliases = ["terminal-prompt-customizer.kawagh.net"]
+  aliases = [local.domain_name]
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate.site.arn
     ssl_support_method       = "sni-only"
