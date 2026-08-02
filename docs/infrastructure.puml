@@ -1,0 +1,40 @@
+@startuml infrastructure
+' terminal-prompt-customizer.kawagh.net のインフラ構成図
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v23.0/dist
+!include AWSPuml/AWSCommon.puml
+!include AWSPuml/Groups/AWSCloud.puml
+!include AWSPuml/Groups/Region.puml
+!include AWSPuml/General/User.puml
+!include AWSPuml/NetworkingContentDelivery/Route53.puml
+!include AWSPuml/NetworkingContentDelivery/CloudFront.puml
+!include AWSPuml/SecurityIdentityCompliance/CertificateManager.puml
+!include AWSPuml/Storage/SimpleStorageService.puml
+
+skinparam defaultFontName "Noto Sans JP, Hiragino Sans, Meiryo, sans-serif"
+hide stereotype
+left to right direction
+title terminal-prompt-customizer.kawagh.net インフラ構成図
+
+User(user, "ユーザー", "")
+
+AWSCloudGroup(aws) {
+  Route53(dns, "Route 53", "")
+  CloudFront(cdn, "CloudFront", "")
+
+  RegionGroup(useast1, "us-east-1") {
+    CertificateManager(acm, "ACM", "")
+  }
+
+  RegionGroup(tokyo, "ap-northeast-1") {
+    SimpleStorageService(s3, "S3", "OACでCloudFront以外のアクセスを制限")
+  }
+}
+
+user --> dns : 名前解決
+user --> cdn : HTTPS GET
+dns ..> cdn : Alias
+acm ..> cdn : 証明書
+cdn --> s3
+
+@enduml
