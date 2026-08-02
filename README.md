@@ -15,3 +15,6 @@ pnpm dev
 pnpm run deploy
 ```
 
+## infrastructure
+
+![インフラ構成図](docs/infrastructure.svg)
